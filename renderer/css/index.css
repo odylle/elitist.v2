@@ -120,3 +120,91 @@ main > * {
     justify-content: center;
     margin-top:1px;
 }
+main div {
+    display: flex;
+}
+/* =======================
+  Main: Initial
+  ======================= */
+main .init {
+    align-items: center;
+    justify-content: flex-start;
+    height: 50vh;
+    width: 50%;
+    margin-top: 25%;
+    padding: 5px;
+}
+main .init div {
+    width: 100%;
+}
+main .init .title {
+    flex-direction: row;
+    margin-bottom: 10px;
+    width: 100%;
+}
+main .init .title .icon {
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #FF7000AA;
+    box-shadow: inset 0 0 5px #FF0000;
+}
+main .init .title .icon i {
+    font-size: 40px;
+    font-weight: 300;
+    text-shadow: 0px 0px 10px #FFFFFF;
+    color: #FFFFFF;
+}
+main .init .title .text {
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 10px
+}
+main .init .title .text .h1 {
+    font-size: 24px;
+    color: #FFFFFF;
+    border-bottom: 1px solid #FF7000;
+    padding-top: 6px;
+}
+main .init .title .text .h4 {
+    font-size: 14px;
+    color: #FF700080;
+    padding-top: 5px;
+}
+main .init .message {
+    font-size: 11px;
+    color: #FF7000DD;
+    font-style: italic;
+    padding-bottom: 4px;
+}
+main .init .log {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-grow: 1;
+    border-top: 1px solid #FF700050;
+    border-bottom: 1px solid #FF700050;
+    padding: 10px 0;
+    overflow-y: scroll;
+}
+main .init .log .entry {
+    flex-direction: row;
+    margin-top: 1px;
+    font-size: 12px;
+}
+main .init .log .entry:first-of-type {
+    margin-top: 0;
+}
+main .init .log .entry i {
+    margin-right: 5px;
+    font-weight: 300;
+}
+main .init .log .entry span {
+    padding-top: 4px;
+    color: #FFFFFF;
+}
+main .init footer {
+    padding-top: 8px;
+    font-size: 12px;
+}
