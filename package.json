@@ -1,0 +1,21 @@
+{
+  "name": "elitist",
+  "displayName": "Elitist",
+  "version": "0.5.0",
+  "description": "Elite: Dangerous Companion",
+  "main": "main/index.js",
+  "license": "MIT",
+  "devDependencies": {},
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "chokidar": "^3.6.0",
+    "dexie": "^4.0.4",
+    "electron": "^29.1.0",
+    "electron-log": "^5.1.2",
+    "electron-store": "^8.2.0",
+    "line-by-line": "^0.1.6"
+  }
+}
