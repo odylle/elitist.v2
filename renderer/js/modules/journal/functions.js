@@ -1,3 +1,5 @@
+const LineByLineReader = require('line-by-line');
+
 const lineFormatter = (line) => {
     if (line.extended == undefined) { line.extended = {distancefromarrivalls: 0}}
     let result = {}
@@ -20,6 +22,11 @@ const lineFormatter = (line) => {
     result.materials = line.Materials != undefined ? line.Materials : line.materials != undefined ? line.materials : false
     return result
 }
+/**
+ * ----------------------------------
+ * Elitist: Read Folder and return contents
+ * ----------------------------------
+ */
 const readFolder = async (folder) => {
     const fs = require("fs")
     return new Promise(async resolve => {
@@ -53,9 +60,59 @@ const orderLogFiles = async (files) => {
     })
 }
 
-const readJournal = async (journal) => {}
-const processEvent = async (event) => {}
+const readJournal = async (journal) => {
+    let lines = 0
+    return new Promise( async (resolve, reject) => {
+        let lr = new LineByLineReader(journal);
+        lr.on('error', function (err) {
+            console.log(err)
+            reject(err)
+        });
+        lr.on('line', async (line) => {
+            lr.pause()
+            line = JSON.parse(line)
+            await processEvent(line).then(async result => {
+                if (result) {
+                    console.log("processEvent() > Result: ", result)
+                }
+            })
+            lines++
+            lr.resume()
+        });
+        lr.on('end', function () {
+            resolve(lines);
+        });
+    });
+}
+
+const processEvent = async (event) => {
+    return new Promise(async (resolve, reject) => {
+        let events = require("./events")
+        if (event.event in events) {
+            // await events[event.event](event)
+            resolve(event.event)
+        }
+        resolve()
+    })
+}
 const processResult = async (result) => {}
+
+/**
+ * ----------------------------------
+ * Elitist: Logdate to Timestamp
+ *
+ * Readable and comparable formatting.
+ * ----------------------------------
+ */
+const logDateToTimestamp = (logDate) => {
+    let year = logDate.substring(0, 4)
+    let month = logDate.substring(5, 7)
+    let day = logDate.substring(8, 10)
+    let hour = logDate.substring(11, 13)
+    let minute = logDate.substring(13, 15)
+    let second = logDate.substring(15, 17)
+    return new Date(year, month, day, hour, minute, second).getTime()
+}
 
 module.exports = {
     lineFormatter,
@@ -63,5 +120,6 @@ module.exports = {
     readJournal,
     processEvent,
     processResult,
-    orderLogFiles
+    orderLogFiles,
+    logDateToTimestamp
 }

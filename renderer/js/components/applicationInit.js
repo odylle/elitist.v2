@@ -1,7 +1,14 @@
+
+
 const logEntry = (icon, message) => {
     const element = document.createElement('div')
     element.classList.add("entry")
-    element.innerHTML = `<i class="fa icarus-terminal-${icon}"></i><span>${message}</span>`
+    let i = document.createElement('i')
+    i.classList.add(...icon)
+    element.appendChild(i)
+    let span = document.createElement('span')
+    span.innerHTML = message
+    element.appendChild(span)
     return element
 }
 
@@ -29,24 +36,29 @@ const init = async () => {
         let main = document.getElementById('mainContent')
         main.appendChild(renderInterface())
         let logContainer = document.getElementById('initLog')
-        const { readFolder, orderLogFiles } = require('../modules/journal').functions
-        logContainer.insertBefore(logEntry("info", "read folder with logfiles"), logContainer.firstChild)
+        const { readFolder, readJournal, orderLogFiles } = require('../modules/journal').functions
+        logContainer.insertBefore(logEntry(["fa", "fa-folder-open"], "read folder with logfiles"), logContainer.firstChild)
         await readFolder(folder).then(async (files) => {
             let logFiles = await files.filter(file => file.split(".").pop() == "log")
-            logContainer.insertBefore(logEntry("info", "filter out the logfiles"), logContainer.firstChild)
+            
+            logContainer.insertBefore(logEntry(["fa", "fa-filter"], "filter out the logfiles"), logContainer.firstChild)
             return logFiles
         }).then(async logFiles => {
-            logContainer.insertBefore(logEntry("info", "ordering logfiles"), logContainer.firstChild)
+            logContainer.insertBefore(logEntry(["fa", "fa-sort"], "ordering logfiles"), logContainer.firstChild)
             let orderedLogFiles = await orderLogFiles(logFiles)
             console.log(orderedLogFiles)
             return orderedLogFiles
         }).then(async orderedLogFiles => {
-            // logContainer.insertBefore(logEntry("info", "done"), logContainer.firstChild)
             for (let file of orderedLogFiles) {
-                logContainer.insertBefore(logEntry("info", file), logContainer.firstChild)
+                logContainer.insertBefore(logEntry(["fa", "fa-book-open"], `Reading: ${file}`), logContainer.firstChild)
+                await readJournal(folder + "/" + file).then(async result => {
+                    console.log("applicationInit > readJournal", result)
+                    logContainer.insertBefore(logEntry(["fa", "fa-check", "green"], `File read: ${result} lines processed`), logContainer.firstChild)
+                })
+                
+                // break
             }
         })
-
         resolve()
     })
 }

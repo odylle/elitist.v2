@@ -128,10 +128,12 @@ main div {
   ======================= */
 main .init {
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     height: 50vh;
     width: 50%;
-    margin-top: 25%;
+    min-width: 350px;
+    max-width: 500px;
+    margin-top: 100px;
     padding: 5px;
 }
 main .init div {
@@ -169,12 +171,12 @@ main .init .title .text .h1 {
 }
 main .init .title .text .h4 {
     font-size: 14px;
-    color: #FF700080;
+    color: #FF7000DD;
     padding-top: 5px;
 }
 main .init .message {
     font-size: 11px;
-    color: #FF7000DD;
+    color: #FF7000AA;
     font-style: italic;
     padding-bottom: 4px;
 }
@@ -198,7 +200,12 @@ main .init .log .entry:first-of-type {
 }
 main .init .log .entry i {
     margin-right: 5px;
-    font-weight: 300;
+    width: 20px;
+    text-align: center;
+}
+main .init .log .entry i.green {
+    color: var(--elite-green);
+    text-shadow: 0px 0px 5px var(--elite-green);
 }
 main .init .log .entry span {
     padding-top: 4px;
