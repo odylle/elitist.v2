@@ -29,7 +29,7 @@ const lineFormatter = (line) => {
  */
 const readFolder = async (folder) => {
     const fs = require("fs")
-    return new Promise(async resolve => {
+    return new Promise(async (resolve, reject) => {
         await fs.promises.readdir(folder, (err, files) => {
             if (err) {
                 reject(err);
@@ -46,6 +46,7 @@ const readFolder = async (folder) => {
  */
 const orderLogFiles = async (files) => {
     return new Promise(async (resolve, reject) => {
+        if (files.length == 0) reject("No files found")
         let oldFormat = [], newFormat = []
         let logFiles = files.filter(file => file.split(".").pop() == "log")
         for (let file of logFiles) {
@@ -60,8 +61,14 @@ const orderLogFiles = async (files) => {
     })
 }
 
+/**
+ * ----------------------------------
+ * Elitist: Read Journal file and process constants
+ * ----------------------------------
+ */
 const readJournal = async (journal) => {
     let lines = 0
+    const configuredEvents = require("./constants").configuredEvents
     return new Promise( async (resolve, reject) => {
         let lr = new LineByLineReader(journal);
         lr.on('error', function (err) {
@@ -71,11 +78,14 @@ const readJournal = async (journal) => {
         lr.on('line', async (line) => {
             lr.pause()
             line = JSON.parse(line)
-            await processEvent(line).then(async result => {
-                if (result) {
-                    console.log("processEvent() > Result: ", result)
-                }
-            })
+            if (configuredEvents.includes(line.event)) {
+                await processEvent(line).then(async result => {
+                    if (result) {
+                        // console.log("processEvent() > Result: ", result)
+
+                    }
+                })
+            }
             lines++
             lr.resume()
         });
@@ -85,11 +95,16 @@ const readJournal = async (journal) => {
     });
 }
 
+/**
+ * ----------------------------------
+ * Elitist: Process line event
+ * ----------------------------------
+ */
 const processEvent = async (event) => {
     return new Promise(async (resolve, reject) => {
         let events = require("./events")
         if (event.event in events) {
-            // await events[event.event](event)
+            await events[event.event](event)
             resolve(event.event)
         }
         resolve()

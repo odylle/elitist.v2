@@ -6,7 +6,7 @@ db.version(1).stores({
     bodies: '[address+id], address, name, type, class, parents, landable, gravity, rings, materials, discovered, mapped',    
 })
 db.version(2).stores({
-    biolog: '[address+id+genus], species, variant',
+    organics: '[genus+species+variant], genus, species, variant, location, values',
 })
 
 module.exports = db

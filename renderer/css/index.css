@@ -36,6 +36,32 @@ body::after {
 }
 
 /* =======================
+  Scrollbar
+  ======================= */
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+  /* Track */
+::-webkit-scrollbar-track {
+    background: #FF700020;
+    /* box-shadow: 
+    inset 4px 0px 0px 0px #00000050, 
+    inset -4px 0px 0px 0px #00000050; */
+}
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #FF7000DD;
+  }
+  
+  /* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #FF7000;
+}
+
+/* =======================
   Application Menu
   ======================= */
   nav.app-menu {
@@ -193,7 +219,7 @@ main .init .log {
 main .init .log .entry {
     flex-direction: row;
     margin-top: 1px;
-    font-size: 12px;
+    font-size: 13px;
 }
 main .init .log .entry:first-of-type {
     margin-top: 0;
@@ -203,13 +229,30 @@ main .init .log .entry i {
     width: 20px;
     text-align: center;
 }
-main .init .log .entry i.green {
+main .init .log .entry i.success {
     color: var(--elite-green);
     text-shadow: 0px 0px 5px var(--elite-green);
 }
-main .init .log .entry span {
-    padding-top: 4px;
+main .init .log .entry i.error {
+    color: var(--elite-red);
+    text-shadow: 0px 0px 5px var(--elite-red);
+}
+main .init .log .entry i.info {
+    color: var(--elite-blue-light);
+    text-shadow: 0px 0px 5px var(--elite-blue-light);
+}
+main .init .log .entry > span {
+    padding-top: 2px;
     color: #FFFFFF;
+}
+main .init .log .entry .entry-time {
+    color: #FF7000AA;
+    padding-right: 10px;
+}
+main .init .log .entry .highlight {
+    color: var(--elite-yellow);
+    text-shadow: 0px 0px 5px var(--elite-yellow);
+    font-weight: 500;
 }
 main .init footer {
     padding-top: 8px;
