@@ -4,7 +4,7 @@ function timeNow() {
       m = (d.getMinutes()<10?'0':'') + d.getMinutes();
       s = (d.getSeconds()<10?'0':'') + d.getSeconds();
     return h + ':' + m + ':' + s;
-  }
+}
 
 const logEntry = (icon, message) => {
     const element = document.createElement('div')
@@ -22,14 +22,14 @@ const logEntry = (icon, message) => {
     return element
 }
 
-const renderInterface = () => {
+const renderContent = () => {
     const element = document.createElement('div')
     element.classList.add("init")
     element.innerHTML = `<div class="title">
         <div class="icon"><i class="fa icarus-terminal-planet-ringed"></i></div>
         <div class="text">
             <div class="h1">Welcome to Elitist</div>
-            <div class="h4">an E:D Companion</div>
+            <div class="h4">an Elite:Dangerous Companion</div>
         </div>
     </div>
     <div class="message">
@@ -48,35 +48,38 @@ const init = async () => {
             store.set(schema)
         }   
         let main = document.getElementById('mainContent')
-        main.appendChild(renderInterface())
+        main.appendChild(renderContent())
         let logContainer = document.getElementById('initLog')
         const { readFolder, readJournal, orderLogFiles, logDateToTimestamp } = require('../modules/journal').functions
-        logContainer.insertBefore(logEntry(["fa", "fa-folder-open"], "read folder with logfiles"), logContainer.firstChild)
+        logContainer.insertBefore(logEntry(["fa", "fa-folder-open"], "check folder for unprocessed logfiles"), logContainer.firstChild)
         await readFolder(folder).then(async (files) => {
             let logFiles = await files.filter(file => file.split(".").pop() == "log")
-            logContainer.insertBefore(logEntry(["fa", "fa-filter"], "filter out the logfiles"), logContainer.firstChild)
+            logContainer.insertBefore(logEntry(["fa", "fa-filter"], "filter out non logfiles"), logContainer.firstChild)
             return logFiles
         }).then(async logFiles => {
-            logContainer.insertBefore(logEntry(["fa", "fa-sort"], "ordering logfiles"), logContainer.firstChild)
+            logContainer.insertBefore(logEntry(["fa", "fa-sort"], "ordering logfiles by date"), logContainer.firstChild)
             let orderedLogFiles = await orderLogFiles(logFiles)
             return orderedLogFiles
         }).then(async orderedLogFiles => {
             let bodiesInDB = 0
             for (let file of orderedLogFiles) {
-                logContainer.insertBefore(logEntry(["fa", "fa-book-open"], `Reading: ${file}`), logContainer.firstChild)
-                await readJournal(folder + "/" + file).then(async result => {
-                    await db.bodies.count().then(count => {
-                        logContainer.insertBefore(logEntry(["fa", "fa-plus", "info"], `<span class="highlight">${count-bodiesInDB}</span> Bodies added`), logContainer.firstChild)
-                        bodiesInDB = count
-                    })
-                    logContainer.insertBefore(logEntry(["fa", "fa-check", "success"], `File read: <span class="highlight">${result}</span> lines processed`), logContainer.firstChild)
-                })
                 let fileDate = file.split('.')[1]
                 let logDate = logDateToTimestamp(fileDate)
                 let processedLogFiles = store.get("logs.files")
-                processedLogFiles.push(logDate)
-                store.set("logs.files", processedLogFiles)
-                store.set("logs.last", logDate)
+                if (!processedLogFiles.includes(logDate)) {
+                    logContainer.insertBefore(logEntry(["fa", "fa-book-open"], `Reading: ${file}`), logContainer.firstChild)
+                    await readJournal(folder + "/" + file).then(async result => {
+                        await db.bodies.count().then(count => {
+                            logContainer.insertBefore(logEntry(["fa", "fa-plus", "info"], `<span class="highlight">${count-bodiesInDB}</span> Bodies added`), logContainer.firstChild)
+                            bodiesInDB = count
+                        })
+                        logContainer.insertBefore(logEntry(["fa", "fa-check", "success"], `File read: <span class="highlight">${result}</span> lines processed`), logContainer.firstChild)
+                    })
+
+                    processedLogFiles.push(logDate)
+                    store.set("logs.files", processedLogFiles)
+                    store.set("logs.last", logDate)
+                }
             }
         }).catch(e => {
             logContainer.insertBefore(logEntry(["fa", "fa-exclamation-triangle", "error"], e), logContainer.firstChild)

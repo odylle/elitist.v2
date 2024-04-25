@@ -128,6 +128,18 @@ const logDateToTimestamp = (logDate) => {
     let second = logDate.substring(15, 17)
     return new Date(year, month, day, hour, minute, second).getTime()
 }
+/**
+ * ----------------------------------
+ * Elitist: FormatNumber
+ *
+ * Readable number formatting.
+ * ----------------------------------
+ */
+const formatNumber = (x) => {
+    if (x != undefined) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+};
 
 module.exports = {
     lineFormatter,
@@ -136,5 +148,6 @@ module.exports = {
     processEvent,
     processResult,
     orderLogFiles,
-    logDateToTimestamp
+    logDateToTimestamp,
+    formatNumber
 }

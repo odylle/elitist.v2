@@ -5,7 +5,8 @@ const storageSchema = {
             "coordinates": []
         },
         "exobiology": {
-            
+            "samples": {},
+            "signals": {}
         }
     },
     "app": {},

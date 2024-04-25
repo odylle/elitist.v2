@@ -41,7 +41,20 @@ const FSDJump = async (line) => {
     })
 }
 const FSSAllBodiesFound = async (line) => {}
-const FSSBodySignals = async (line) => {}
+const FSSBodySignals = async (line) => {
+    return new Promise( async resolve => {
+        line.Signals.forEach(signal => {
+            if (signal.Type_Localised == "Biological") {
+                if (!store.get("session.exobiology.signals." + line.SystemAddress)) { store.set("session.exobiology.signals." + line.SystemAddress, []) }
+                let signals = store.get("session.exobiology.signals." + line.SystemAddress)
+                
+                signals[line.BodyID] = signal.Count
+                store.set("session.exobiology.signals." + line.SystemAddress, signals)
+            }
+        })
+        resolve()
+    })
+}
 const Loadout = async (line) => {}
 const Location = async (line) => {
     return new Promise( resolve => {
@@ -83,7 +96,10 @@ const Location = async (line) => {
     })
 }
 const NavRoute = async (line) => {}
-const SAASignalsFound = async (line) => {}
+const SAASignalsFound = async (line) => {
+    // Signals found in the system
+    console.log(line)
+}
 const Scan = async (line) => {
     return new Promise( resolve => {
         const { Star, Planet } = require("./classes")
@@ -147,12 +163,12 @@ const ScanOrganic = async (line) => {
             let genus = line.Genus_Localised, species = line.Species_Localised.split(" ").pop(), variant = line.Variant_Localised.split(" ").pop()
 
             // Add to session. The values there are cleared after a SellorganicData event
-            if (!store.get(`session.exobiology.${genus}.${species}.${variant}`)) {
-                store.set(`session.exobiology.${genus}.${species}.${variant}.count`, 1)
+            if (!store.get(`session.exobiology.samples.${genus}.${species}.${variant}`)) {
+                store.set(`session.exobiology.samples.${genus}.${species}.${variant}.count`, 1)
             } else {
-                let count = store.get(`session.exobiology.${genus}.${species}.${variant}.count`)
+                let count = store.get(`session.exobiology.samples.${genus}.${species}.${variant}.count`)
                 count++
-                store.set(`session.exobiology.${genus}.${species}.${variant}.count`, count)
+                store.set(`session.exobiology.samples.${genus}.${species}.${variant}.count`, count)
             }
             
             const Organic = require("./classes").Organic
@@ -167,7 +183,7 @@ const ScanOrganic = async (line) => {
 }
 const SellOrganicData = async (line) => {
     return new Promise(async resolve => {
-        store.set("session.exobiology", {})
+        store.set("session.exobiology.samples", {})
         const Organic = require("./classes").Organic
         for await (let organic of line.BioData) {
             let obj = new Organic(organic.Genus_Localised, organic.Species_Localised.split(" ").pop(), organic.Variant_Localised.split(" ").pop())

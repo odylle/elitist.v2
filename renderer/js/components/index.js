@@ -4,7 +4,7 @@ const exobiologyContent = require('./exobiologyContent')
 const mainContent = require('./mainContent')
 const materialsContent = require('./materialsContent')
 const notificationCenter = require('./notificationCenter')
-const systemContent = require('./systemContent')
+const systemContent = require('./system')
 
 module.exports = {
     init: applicationInit,

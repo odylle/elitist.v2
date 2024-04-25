@@ -15,8 +15,79 @@ queue = new notifications.NotificationQueue()
 
 folder = process.cwd() + "/logs"
 
-window.addEventListener('DOMContentLoaded', async () => {
-    await components.init(folder).then(async () => {
-        console.log("then: Application Initialized")
+
+const getPromiseFromEvent = (item, event) => {
+    return new Promise((resolve) => {
+      const listener = () => {
+        item.removeEventListener(event, listener);
+        resolve();
+      }
+      item.addEventListener(event, listener);
     })
+  }
+
+window.addEventListener('DOMContentLoaded', async () => {
+    console.log("DOMContentLoaded")
+    await components.init(folder).then(async () => {
+        let initElement = document.querySelector('.init')
+        const css = ["animated", "fadeOut", "delay-1s"]
+        initElement.classList.add(...css)
+        await getPromiseFromEvent(initElement, "animationend")
+        initElement.remove()
+        await components.main.render()
+        let system = document.getElementById("systemContent")
+        return system
+    }).then(async (system) => {
+        let address = store.get("session.location.address")
+        address = 14178837668
+        system.appendChild(await components.system.render(address))
+        let bodiesElement = system.querySelector('.system-bodies')
+        let bodies = await db.bodies.where("address").equals(address).toArray()
+        bodies.forEach(async body => {
+            let bodyElement = await components.system.renderBodies(address, body)
+            await bodiesElement.appendChild(bodyElement)
+        })
+    })
+    console.log("after await init")
 })
+
+
+
+
+
+// window.addEventListener('DOMContentLoaded', async () => {
+//     await components.init(folder).then(async () => {
+//         return new Promise (async resolve => {
+//             let system
+//             let initElement = document.querySelector('.init')
+//             const css = ["animated", "fadeOut", "delay-1s"]
+//             initElement.classList.add(...css)
+//             await initElement.addEventListener('animationend', async () => {
+//                 initElement.remove()
+//                 await components.main.render()
+//                 system = document.getElementById("systemContent")
+//                 system.appendChild(await components.system.render(store.get("session.location.address")))
+//                 let bodiesElement = system.querySelector('.system-bodies')
+//                 let bodies = await db.bodies.where("address").equals(store.get("session.location.address")).toArray()
+//                 bodies.forEach(async body => {
+//                     let bodyElement = await components.system.renderBodies(store.get("session.location.address"), body)
+//                     bodiesElement.appendChild(bodyElement)
+//                 console.log("First")
+//             })
+//             resolve(system)
+
+//         }).then(result => console.log(result))
+//     })
+// })
+
+// let main = document.getElementById("mainContent")
+// main.appendChild(components.main.render())
+// window.addEventListener('DOMContentLoaded', async () => {
+//     components.main.render()
+//     let system = document.getElementById("systemContent")    
+//     system.appendChild(await components.system.render(store.get("session.location.address")))
+// })
+
+// let system = document.getElementById("systemContent")
+// let systemContent = await components.system.render(store.get("session.location.address"))
+// system.appendChild(await components.system.render(store.get("session.location.address")))
