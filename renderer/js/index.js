@@ -5,6 +5,9 @@ const db = require('./js/modules/storageDB');
 const Store = require('electron-store');
 let store = new Store()
 
+// Initialize Electron IPC
+const ipc = require("electron").ipcRenderer;
+
 const components = require("./js/components")
 const { journal } = require("./js/modules")
 
@@ -27,7 +30,7 @@ const getPromiseFromEvent = (item, event) => {
   }
 
 window.addEventListener('DOMContentLoaded', async () => {
-    console.log("DOMContentLoaded")
+    ipc.send("watcher:start", folder);
     await components.init(folder).then(async () => {
         let initElement = document.querySelector('.init')
         const css = ["animated", "fadeOut", "delay-1s"]
@@ -52,7 +55,25 @@ window.addEventListener('DOMContentLoaded', async () => {
 })
 
 
-
+ /**
+ * ----------------------------------
+ * Events from Main
+ * ----------------------------------
+ */
+ ipc.on("watcher:start:reply", (event, args) => {
+    console.log(args);
+});
+// ipc.on("watcher:file:new", (event, args) => {
+//     if (args.split(".").pop() == "log") {
+//         store.set('app.fromLine', 0)
+//         helpers.processLogFile(args).then(result => console.log(result))
+//     }
+// });
+// ipc.on("watcher:file:update", (event, args) => {
+//     if (args.split(".").pop() == "log") {
+//         helpers.processLogFile(args).then(result => console.log(result))
+//     }
+// });
 
 
 // window.addEventListener('DOMContentLoaded', async () => {
