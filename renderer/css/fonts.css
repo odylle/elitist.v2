@@ -1,23 +1,23 @@
 @import url("https://fonts.googleapis.com/css?family=Sintony");
-@import url('../static/fonts/icarus-terminal/icarus-terminal.css');
+@import url("../static/fonts/icarus-terminal/icarus-terminal.css");
 
 @font-face {
-    font-family: EuroCaps;
-    src: url(../static/fonts/EUROCAPS.TTF);
-    font-weight: 200;
+  font-family: EuroCaps;
+  src: url(../static/fonts/EUROCAPS.TTF);
+  font-weight: 200;
 }
 
 @font-face {
-    font-family: Telegrama;
-    src: url(../static/fonts/telegrama_render.otf) format("opentype");
+  font-family: Telegrama;
+  src: url(../static/fonts/telegrama_render.otf) format("opentype");
 }
 
 @font-face {
-    font-family: Eurostile;
-    src: url(../static/fonts/EurostileReg.otf) format("opentype");
+  font-family: Eurostile;
+  src: url(../static/fonts/EurostileReg.otf) format("opentype");
 }
 
 @font-face {
-    font-family: EurostileCondensed;
-    src: url(../static/fonts/EurostileCondensed.otf) format("opentype");
+  font-family: EurostileCondensed;
+  src: url(../static/fonts/EurostileCondensed.otf) format("opentype");
 }

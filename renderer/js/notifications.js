@@ -28,8 +28,8 @@ class Notification extends Event {
     if (!this.constructor.#ALLOWED_LEVELS.includes(level)) {
       throw new Error(
         `Level ${level} is not allowed, must be one of ${this.#ALLOWED_LEVELS.join(
-          ", "
-        )}`
+          ", ",
+        )}`,
       );
     }
 
@@ -38,7 +38,7 @@ class Notification extends Event {
     this.#icon = icon;
 
     this.#dismissed = new Promise(
-      (resolve) => (this.#dismissResolve = resolve)
+      (resolve) => (this.#dismissResolve = resolve),
     );
   }
 

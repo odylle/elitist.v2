@@ -1,25 +1,25 @@
 const storageSchema = {
-    "session": {
-        "location": {
-            "address": null,
-            "coordinates": []
-        },
-        "exobiology": {
-            "samples": {},
-            "signals": {},
-            "genuses": {}
-        }
+  session: {
+    location: {
+      address: null,
+      coordinates: [],
     },
-    "app": {},
-    "logs": {
-        "last": null,
-        "files": [],
+    exobiology: {
+      samples: {},
+      signals: {},
+      genuses: {},
     },
-    "cargo": {
-        "capacity": 0,
-        "inventory": []
-    },
-}
+  },
+  app: {},
+  logs: {
+    last: null,
+    files: [],
+  },
+  cargo: {
+    capacity: 0,
+    inventory: [],
+  },
+};
 module.exports = {
-    schema: storageSchema
-}
+  schema: storageSchema,
+};

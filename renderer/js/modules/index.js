@@ -1,4 +1,4 @@
-const journal = require('./journal');
+const journal = require("./journal");
 module.exports = {
-    journal
-}
+  journal,
+};
