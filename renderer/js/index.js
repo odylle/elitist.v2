@@ -16,9 +16,9 @@ const notifications = require("./js/notifications");
 queue = new notifications.NotificationQueue();
 // queue.addEventListener('notification', helpers.renderNotification)
 
-folder = process.cwd() + "/logs";
+// folder = process.cwd() + "/logs";
 // folder = "%userprofile%\\Saved Games\\Frontier Developments\\Elite Dangerous"
-// folder = require("os").homedir() + "\\Saved Games\\Frontier Developments\\Elite Dangerous"
+folder = require("os").homedir() + "\\Saved Games\\Frontier Developments\\Elite Dangerous"
 
 const getPromiseFromEvent = (item, event) => {
   return new Promise((resolve) => {
