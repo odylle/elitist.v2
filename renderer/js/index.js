@@ -49,14 +49,21 @@ window.addEventListener('DOMContentLoaded', async () => {
           let bodiesElement = system.querySelector('.system-bodies')
           let bodies = await db.bodies.where("address").equals(address).toArray()
           bodies.forEach(async body => {
-              let bodyElement = await components.system.renderBodies(address, body)
-              await bodiesElement.appendChild(bodyElement)
+              if (body.type == "Star" || body.type == "Planet") {
+                let bodyElement = await components.system.renderBodies(address, body)
+                await bodiesElement.appendChild(bodyElement)
+              }
           })
         }
     })
     ipc.send("watcher:start", folder);
-    console.log("after await init")
+    // console.log("after await init")
 })
+onresize = (event) => { 
+  store.set("app.window.width", window.innerWidth)
+  store.set("app.window.height", window.innerHeight)
+};
+
 
 
 

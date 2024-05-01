@@ -3,6 +3,7 @@ log.initialize();
 
 const Store = require('electron-store');
 Store.initRenderer()
+let store = new Store()
 
 
 // Modules to control application life and create native browser window
@@ -15,12 +16,13 @@ let win
 const createWindow = () => {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 1440,
-    height: 1000,
+    width: store.get("app.window.width") ? store.get("app.window.width") : 1440,
+    height: store.get("app.window.height") ? store.get("app.window.height") : 900,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
-    }
+    },
+    frame: false,
   })
 
   // and load the index.html of the app.
