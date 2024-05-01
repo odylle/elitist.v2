@@ -15,8 +15,8 @@ let win
 const createWindow = () => {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1440,
+    height: 1000,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
@@ -27,7 +27,7 @@ const createWindow = () => {
   win.loadFile('renderer/index.html')
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  // win.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished

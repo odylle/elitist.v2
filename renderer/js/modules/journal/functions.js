@@ -66,30 +66,35 @@ const orderLogFiles = async (files) => {
  * Elitist: Read Journal file and process constants
  * ----------------------------------
  */
-const readJournal = async (journal) => {
+const readJournal = async (journal, live=false) => {
     let lines = 0
     const configuredEvents = require("./constants").configuredEvents
     return new Promise( async (resolve, reject) => {
+        let readFromLine = store.get("app.fromLine") ? store.get("app.fromLine") : 0
         let lr = new LineByLineReader(journal);
         lr.on('error', function (err) {
             console.log(err)
             reject(err)
         });
         lr.on('line', async (line) => {
-            lr.pause()
-            line = JSON.parse(line)
-            if (configuredEvents.includes(line.event)) {
-                await processEvent(line).then(async result => {
-                    if (result) {
-                        // console.log("processEvent() > Result: ", result)
-
-                    }
-                })
+            // if (line) overcomes a weird error where a newline is suddenly empty..
+            if (line && lines >= readFromLine) {
+                lr.pause()
+                line = JSON.parse(line)
+                if (configuredEvents.includes(line.event)) {
+                    await processEvent(line).then(async result => {
+                        if (result && live) {
+                            await processResult(result)
+                        }
+                    })
+                }
+                readFromLine++
             }
-            lines++
+            lines++            
             lr.resume()
         });
         lr.on('end', function () {
+            store.set("app.fromLine", readFromLine)
             resolve(lines);
         });
     });
@@ -104,13 +109,35 @@ const processEvent = async (event) => {
     return new Promise(async (resolve, reject) => {
         let events = require("./events")
         if (event.event in events) {
-            await events[event.event](event)
-            resolve(event.event)
+            let result = await events[event.event](event)
+            resolve(result)
+        } else {
+            console.log("Event not found (Should never be hit): ", event.event)
+            resolve()
         }
-        resolve()
     })
 }
-const processResult = async (result) => {}
+const processResult = async (result) => {
+    return new Promise( async resolve => {
+        let func = getFunction(result.callback);
+        if (result.callback && func) {
+            await func(result.data);
+        }
+        resolve();
+    });
+}
+
+function getFunction(path) {
+    let parts = path.split('.');
+    let obj = components;
+    for (let part of parts) {
+        if (obj[part] === undefined) {
+            return undefined;
+        }
+        obj = obj[part];
+    }
+    return typeof obj === 'function' ? obj : undefined;
+}
 
 /**
  * ----------------------------------
@@ -120,12 +147,12 @@ const processResult = async (result) => {}
  * ----------------------------------
  */
 const logDateToTimestamp = (logDate) => {
-    let year = logDate.substring(0, 4)
-    let month = logDate.substring(5, 7)
-    let day = logDate.substring(8, 10)
-    let hour = logDate.substring(11, 13)
-    let minute = logDate.substring(13, 15)
-    let second = logDate.substring(15, 17)
+    let year = logDate.includes("T") ? logDate.substring(0, 4) : "20"+ logDate.substring(0, 2)
+    let month = logDate.includes("T") ? logDate.substring(5, 7) : logDate.substring(2, 4)
+    let day = logDate.includes("T") ? logDate.substring(8, 10) : logDate.substring(4, 6)
+    let hour = logDate.includes("T") ? logDate.substring(11, 13) : logDate.substring(6, 8)
+    let minute = logDate.includes("T") ? logDate.substring(13, 15) : logDate.substring(8, 10)
+    let second = logDate.includes("T") ? logDate.substring(15, 17) : logDate.substring(10, 12)
     return new Date(year, month, day, hour, minute, second).getTime()
 }
 /**

@@ -68,6 +68,7 @@ const init = async () => {
                 let processedLogFiles = store.get("logs.files")
                 if (!processedLogFiles.includes(logDate)) {
                     logContainer.insertBefore(logEntry(["fa", "fa-book-open"], `Reading: ${file}`), logContainer.firstChild)
+                    store.set("app.fromLine", 0)
                     await readJournal(folder + "/" + file).then(async result => {
                         await db.bodies.count().then(count => {
                             logContainer.insertBefore(logEntry(["fa", "fa-plus", "info"], `<span class="highlight">${count-bodiesInDB}</span> Bodies added`), logContainer.firstChild)
@@ -82,6 +83,7 @@ const init = async () => {
                 }
             }
         }).catch(e => {
+            console.log(folder)
             logContainer.insertBefore(logEntry(["fa", "fa-exclamation-triangle", "error"], e), logContainer.firstChild)
         })
         logContainer.insertBefore(logEntry(["fa", "fa-check-square", "success"], `Files read, events processed, loading application...`), logContainer.firstChild)

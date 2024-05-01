@@ -17,6 +17,8 @@ queue = new notifications.NotificationQueue()
 // queue.addEventListener('notification', helpers.renderNotification)
 
 folder = process.cwd() + "/logs"
+// folder = "%userprofile%\\Saved Games\\Frontier Developments\\Elite Dangerous"
+// folder = require("os").homedir() + "\\Saved Games\\Frontier Developments\\Elite Dangerous"
 
 
 const getPromiseFromEvent = (item, event) => {
@@ -30,7 +32,6 @@ const getPromiseFromEvent = (item, event) => {
   }
 
 window.addEventListener('DOMContentLoaded', async () => {
-    ipc.send("watcher:start", folder);
     await components.init(folder).then(async () => {
         let initElement = document.querySelector('.init')
         const css = ["animated", "fadeOut", "delay-1s"]
@@ -42,19 +43,37 @@ window.addEventListener('DOMContentLoaded', async () => {
         return system
     }).then(async (system) => {
         let address = store.get("session.location.address")
-        address = 14178837668
+        // address = 357522412162
         system.appendChild(await components.system.render(address))
-        let bodiesElement = system.querySelector('.system-bodies')
-        let bodies = await db.bodies.where("address").equals(address).toArray()
-        bodies.forEach(async body => {
-            let bodyElement = await components.system.renderBodies(address, body)
-            await bodiesElement.appendChild(bodyElement)
-        })
+        if (address) {
+          let bodiesElement = system.querySelector('.system-bodies')
+          let bodies = await db.bodies.where("address").equals(address).toArray()
+          bodies.forEach(async body => {
+              let bodyElement = await components.system.renderBodies(address, body)
+              await bodiesElement.appendChild(bodyElement)
+          })
+        }
     })
+    ipc.send("watcher:start", folder);
     console.log("after await init")
 })
 
 
+
+
+// Window Control
+document.getElementById('minimizeButton').addEventListener('click', () => {
+  ipc.send('app:minimize')
+})
+document.getElementById('minMaxButton').addEventListener('click', () => {
+  ipc.send('app:maximize')
+})
+document.getElementById('fullScreenButton').addEventListener('click', () => {
+  ipc.send('app:fullscreen')
+})
+document.getElementById('closeButton').addEventListener('click', () => {
+  ipc.send('app:quit')
+})
  /**
  * ----------------------------------
  * Events from Main
@@ -63,52 +82,16 @@ window.addEventListener('DOMContentLoaded', async () => {
  ipc.on("watcher:start:reply", (event, args) => {
     console.log(args);
 });
-// ipc.on("watcher:file:new", (event, args) => {
-//     if (args.split(".").pop() == "log") {
-//         store.set('app.fromLine', 0)
-//         helpers.processLogFile(args).then(result => console.log(result))
-//     }
-// });
-// ipc.on("watcher:file:update", (event, args) => {
-//     if (args.split(".").pop() == "log") {
-//         helpers.processLogFile(args).then(result => console.log(result))
-//     }
-// });
-
-
-// window.addEventListener('DOMContentLoaded', async () => {
-//     await components.init(folder).then(async () => {
-//         return new Promise (async resolve => {
-//             let system
-//             let initElement = document.querySelector('.init')
-//             const css = ["animated", "fadeOut", "delay-1s"]
-//             initElement.classList.add(...css)
-//             await initElement.addEventListener('animationend', async () => {
-//                 initElement.remove()
-//                 await components.main.render()
-//                 system = document.getElementById("systemContent")
-//                 system.appendChild(await components.system.render(store.get("session.location.address")))
-//                 let bodiesElement = system.querySelector('.system-bodies')
-//                 let bodies = await db.bodies.where("address").equals(store.get("session.location.address")).toArray()
-//                 bodies.forEach(async body => {
-//                     let bodyElement = await components.system.renderBodies(store.get("session.location.address"), body)
-//                     bodiesElement.appendChild(bodyElement)
-//                 console.log("First")
-//             })
-//             resolve(system)
-
-//         }).then(result => console.log(result))
-//     })
-// })
-
-// let main = document.getElementById("mainContent")
-// main.appendChild(components.main.render())
-// window.addEventListener('DOMContentLoaded', async () => {
-//     components.main.render()
-//     let system = document.getElementById("systemContent")    
-//     system.appendChild(await components.system.render(store.get("session.location.address")))
-// })
-
-// let system = document.getElementById("systemContent")
-// let systemContent = await components.system.render(store.get("session.location.address"))
-// system.appendChild(await components.system.render(store.get("session.location.address")))
+ipc.on("watcher:file:new", async (event, args) => {
+    if (args.split(".").pop() == "log") {
+        store.set('app.fromLine', 0)
+        // helpers.processLogFile(args).then(result => console.log(result))
+        journal.functions.readJournal(args, true)
+        
+    }
+});
+ipc.on("watcher:file:update", async (event, args) => {
+    if (args.split(".").pop() == "log") {
+      await journal.functions.readJournal(args, true)
+    }
+});

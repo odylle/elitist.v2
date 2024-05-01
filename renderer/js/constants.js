@@ -6,7 +6,8 @@ const storageSchema = {
         },
         "exobiology": {
             "samples": {},
-            "signals": {}
+            "signals": {},
+            "genuses": {}
         }
     },
     "app": {},

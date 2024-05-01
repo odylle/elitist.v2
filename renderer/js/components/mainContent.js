@@ -40,7 +40,7 @@ const renderContent = () => {
     main.appendChild(systemSection)
 
     let footer = document.createElement('footer')
-    footer.innerHTML = "Footer"
+    footer.innerHTML = "Some Useful content here..."
     main.appendChild(footer)
 
     return main

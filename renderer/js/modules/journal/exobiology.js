@@ -120,6 +120,25 @@ const variantValues = {
         "Virgam": 14313700
     }
 }
+const colonyRange = {
+    "Aleoida": 150,
+    "Bacterium": 500,
+    "Cactoida": 300,
+    "Clypeus": 150,
+    "Concha": 150,
+    "Electricae": 1000,
+    "Fonticulua": 500,
+    "Frutexa": 150,
+    "Fumerola": 100,
+    "Fungoida": 300,
+    "Osseus": 800,
+    "Recepta": 150,
+    "Stratum": 500,
+    "Tubus": 800,
+    "Tussock": 200
+}
+
 module.exports = {
-    values: variantValues
+    values: variantValues,
+    range: colonyRange
 }

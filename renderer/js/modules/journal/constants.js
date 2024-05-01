@@ -3,7 +3,7 @@ const configuredEvents = [
     "FSDJump",
     "FSSBodySignals",
     "Location",
-    // "SAASignalsFound",
+    "SAASignalsFound",
     "Scan",
     "ScanOrganic",
     "SellOrganicData"

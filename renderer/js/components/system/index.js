@@ -1,3 +1,4 @@
+const update = require("./update")
 const bodySummary = async (address) => {
     let stars, planets
     let bodies = await db.bodies.where("address").equals(address).toArray()
@@ -23,16 +24,7 @@ const systemFeatures = (system) => {
     <i class="fa icarus-terminal-planet-water-world ww"></i>
     <i class="fa icarus-terminal-planet-ammonia-world aw"></i>`
 }
-// const setFeature = {
-//     life: async () => {
-//         let element = await document.getElementById("systemFeatures")
-//         element.querySelector(".life").classList.add("found")    
-//     },
-//     terraformable: async () => {
-//         let element = await document.getElementById("systemFeatures")
-//         element.querySelector(".terraformable").classList.add("found")    
-//     }
-// }
+
 const setFeature = (feature) => {
     let element = document.getElementById("systemFeatures")
     element.querySelector(`.${feature}`).classList.add("found")
@@ -112,9 +104,14 @@ const starClassification = (starClass) => {
     if (["O", "B", "A", "F", "G", "K", "M", "L", "T", "Y"].includes(starClass)) {
         return `${starClass} class main sequence`
     }
+    if (starClass == "TTS") {
+        return `T Tauri star`
+    }
+    if (starClass == undefined) {
+        return `Unknown class`
+    }
     return `class ${starClass}`
 }
-
 
 const bodyAttributes = (body) => {
     attributes = []
@@ -147,6 +144,12 @@ const bodyAttributes = (body) => {
         setFeature("aw")
         attributes.push(`ammonia-world`)
     }
+    if (!body.discovered) {
+        attributes.push(`undiscovered`)
+    }
+    if (body.discovered && !body.mapped) {
+        attributes.push(`unmapped`)
+    }
     if (store.get(`session.exobiology.signals.${body.address}`)) {
         let signal = store.get(`session.exobiology.signals.${body.address}`)
         if (signal[body.id] != null) {
@@ -157,15 +160,35 @@ const bodyAttributes = (body) => {
     return attributes
 }
 
-// const bodyHasLife = async (address, id) => {
-//     if (store.get(`session.exobiology.signals.${address}`)) {
-//         let body = store.get(`session.exobiology.signals.${address}`)
-//         if (body[id] != null) {
-//             setFeature("life")
-//             return true
-//         }
-//     }
-// }
+const bodyCss = (css, attributes) => {
+    if (attributes.includes("far-away")) {
+        css.push("far-away")
+    }
+    if (attributes.includes("earthlike")) {
+        css.push("earthlike")
+    }
+    if (attributes.includes("water-world")) {
+        css.push("water-world")
+    }
+    if (attributes.includes("ammonia-world")) {
+        css.push("ammonia-world")
+    }
+    if (attributes.includes("terraformable")) {
+        css.push("terraformable")
+    }
+    return css
+}
+
+const isValuable = (genus, species) => {
+    const bioValues = require("../../modules/journal/exobiology").values
+    if (bioValues[genus][species] > 10000000) {
+        return true
+    }
+}
+const getColonyRange = (genus) => {
+    const range = require("../../modules/journal/exobiology").range
+    return range[genus]
+}
 
 const renderSystemSummary = async (address) => {
     let system = await db.systems.get(address)
@@ -185,56 +208,107 @@ const renderSystemSummary = async (address) => {
 }
 
 const renderBodyElement = async (address, body) => {
-    const lineFormatter = require("../../modules/journal/functions").lineFormatter
+    const {lineFormatter, formatNumber} = require("../../modules/journal/functions")
     body = lineFormatter(body)
     
     if (body.type == "Star" || body.type == "Planet") {
         let element = document.createElement('div')
-        rowCss = ["body", body.type == "Star" ? "star" : "planet"]
-        element.classList.add(...rowCss)
+        element.id = `${body.address}.${body.id}`
+        let css = ["body", body.type == "Star" ? "star" : "planet"]
 
         let attributes = bodyAttributes(body)
-        let signals = store.get(`session.exobiology.signals.${body.address}`)[body.id] ? "siganls found" : ""
-        element.innerHTML = `<div class="icon">${body.type == "Planet" ? icon.planet(body.class) : icon.star }</div>
+        css = bodyCss(css, attributes)
+        element.classList.add(...css)
+        element.innerHTML = `<div class="icon">
+            ${body.type == "Planet" ? icon.planet(body.class) : icon.star }
+            ${attributes.includes("atmosphere") ? `<div class="atmosphere"><i class="fa icarus-terminal-atmosphere"></i></div>` : ""}
+            ${attributes.includes("landable") ? `<div class="lander"><i class="fa icarus-terminal-planet-lander"></i></div>` : ""}
+        </div>
         <div class="details">
             <div class="name">${body.name}</div>
             <div class="class">${body.type == "Planet" ? body.class : starClassification(body.class) }</div>
         </div>
         <div class="attributes">
-            ${!body.discovered ? icon.undiscovered : ""}
-            ${body.discovered && !body.mapped && body.type != "Star" ? icon.unmapped : ""}
+            ${attributes.includes("landable") ? icon.landable(body.gravity) : ""}
             ${attributes.includes("life") ? icon.life : ""}
-            ${body.terraformstate ? icon.terraformable : ""}
-            ${body.volcanism ? icon.volcanism : ""}
-            ${body.atmosphere ? icon.atmosphere : ""}
-            ${body.landable ? icon.landable(body.gravity) : ""}
+            ${attributes.includes("terraformable") ? icon.terraformable : ""}
+            ${attributes.includes("volcanism") ? icon.volcanism : ""}
+
+            ${attributes.includes("undiscovered") ? icon.undiscovered : ""}
+            ${attributes.includes("unmapped") && body.type != "Star" ? icon.unmapped : ""}
         </div>
-        <div class="distance ${attributes.includes("far-away") ? "far-away" : ""}">${parseFloat(body.distance.toFixed(2))} ls</div>
-        <div class="signals">${signals}</div>
+        <div class="distance ${attributes.includes("far-away") ? "far-away" : ""}">${formatNumber(body.distance.toFixed(2))}Ls</div>
+        <div class="signals">${await renderSignals(body.address, body.id) }</div>
         `
         return element
     }
     else { return "" }
 }
 
+const renderSignalElement = (genus, values) => {
+    return `<div>
+        <span class="genus">
+            ${isValuable(genus, values.species) ? `<i class="fa icarus-terminal-planet-high-value"></i>` : ""}
+            ${genus}</span> 
+        <span class="species">${values.species != null ? values.species : ""}</span> 
+        <span class="variant">${values.variant != null ? values.variant : ""}</span>
+    </div>
+    <div>
+        <span class="colony-range">${getColonyRange(genus)}m</span>
+        <span class="progress">
+            <i class="fa ${values.progress < 1 ? `fa-square` : `fa-check-square`}"></i>
+            <i class="fa ${values.progress < 2 ? `fa-square` : `fa-check-square`}"></i>
+            <i class="fa ${values.progress < 3 ? `fa-square` : `fa-check-square`}"></i>
+        </span>
+    </div>`
+}
+
+const renderSignals = async (address, body) => {
+    let result = ""
+    if (address in store.get(`session.exobiology.signals`) && body in store.get(`session.exobiology.signals.${address}`)) {
+        let signals = store.get(`session.exobiology.signals.${address}`)[body]
+        if (typeof signals == "number") {
+            return `<div class="only-count"><i class="fa icarus-terminal-signal"></i> ${signals} ${signals > 1 ? "signals" : "signal" } Found. Use FSS</div>`
+        } else {
+            Object.entries(signals).forEach(async ([genus, values]) => {
+                let element = document.createElement('div')
+                let css = ["signal", genus.toLocaleLowerCase()]
+                element.classList.add(...css)
+                element.innerHTML = renderSignalElement(genus, values)
+                result += element.outerHTML
+            });
+            return result
+        }
+    }
+    else { return "" }
+}
+
 
 const renderSystemContent = async (address) => {
-    // address = 354678770179
+    // address = 357522412162
     let element = document.createElement('div')
     element.classList.add("system-summary")
+    element.id = address
+    element.innerHTML = `<span class="no-address">No System Found</span>`
+    if (address != null) {
+        let summary = await renderSystemSummary(address)
+        element.innerHTML = summary
 
-    let summary = await renderSystemSummary(address)
-    element.innerHTML = summary
+        let bodiesElement = document.createElement('div')
+        bodiesElement.classList.add("system-bodies")
 
-    let bodiesElement = document.createElement('div')
-    bodiesElement.classList.add("system-bodies")
-
-    element.appendChild(bodiesElement)
+        element.appendChild(bodiesElement)
+    }
     return element
 }
 
 
-module.exports = { 
+module.exports = {
+    summary: bodySummary, 
     render: renderSystemContent,
-    renderBodies: renderBodyElement
+    renderBodies: renderBodyElement,
+    renderSummary: renderSystemSummary,
+    renderSignalElement: renderSignalElement,
+    starClassification: starClassification,
+    update: update
 }
