@@ -31,6 +31,7 @@ const getPromiseFromEvent = (item, event) => {
 };
 
 window.addEventListener("DOMContentLoaded", async () => {
+  document.getElementById("appVersion").innerText = "v" + ipc.sendSync("app:version");
   await components
     .init(folder)
     .then(async () => {
@@ -62,6 +63,8 @@ window.addEventListener("DOMContentLoaded", async () => {
       }
     });
   ipc.send("watcher:start", folder);
+  
+  // ipc.sendSync("app:version")
   // console.log("after await init")
 });
 onresize = (event) => {

@@ -84,6 +84,7 @@ ipcMain.on("app:maximize", (event, arg) => {
     win.maximize();
   }
 });
+
 ipcMain.on("app:fullscreen", (event, arg) => {
   if (win.isFullScreen()) {
     win.setFullScreen(false);
