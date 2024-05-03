@@ -75,18 +75,17 @@ nav.app-menu {
   position: fixed;
   top: 0px;
   width: 100%;
-  height: 24px;
+  height: 32px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  /* user-select: none; */
-  /* -webkit-user-select: none; */
   -webkit-app-region: drag;
   text-transform: uppercase;
-  /* background-color: #ffffff; */
 }
 
 nav .app-title {
+  display: flex;
+  align-items: center;
   font-family: EuroStile;
   font-size: 1rem;
   line-height: 1.6;
@@ -140,7 +139,7 @@ main {
   max-height: 100dvh;
   max-width: 100vw;
   font-size: 14px;
-  padding-top: 24px;
+  padding-top: 32px;
 }
 main > * {
   display: flex;
@@ -316,14 +315,14 @@ main section > header .title div {
   padding-left: 10px;
 }
 main section > header .title .h1 {
-  height: 60%;
-  font-size: 1.15rem;
+  height: 55%;
+  font-size: 1.2rem;
   color: #ff7000;
-  align-items: center;
+  align-items: flex-end;
 }
 main section > header .title .h4 {
-  height: 40%;
-  font-size: 0.85rem;
+  height: 45%;
+  font-size: 1rem;
   color: #ff7000aa;
   align-items: center;
 }
@@ -592,7 +591,7 @@ main .system-bodies .body .details .name {
   padding-top: 8px;
 }
 main .system-bodies .body .details .class {
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   color: #ff7000aa;
   /* padding-top: 4px; */
   padding-left: 14px;
@@ -654,13 +653,13 @@ main .system-bodies .body .attributes i.life {
 main .system-bodies .body .distance {
   padding: 0 10px;
   font-family: Telegrama;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   text-transform: none;
   width: 140px;
   justify-content: flex-end;
   color: #ff7000cc;
   border-left: 1px solid #00000080;
-  text-shadow: 0 0 2px #000000;
+  text-shadow: 0 0 4px #000000;
 }
 main .system-bodies .body .distance.far-away {
   color: #ff0000cc;
@@ -703,10 +702,6 @@ main .system-bodies .body .signals .signal {
 main .system-bodies .body .signals .signal:nth-of-type(2n + 2) {
   border-right: 0;
 }
-/* main .system-bodies .body .signals .signal:nth-of-type(n+5) {
-    border-bottom: 0;
-} */
-
 main .system-bodies .body .signals .signal span {
   font-size: 0.92rem;
   padding-right: 5px;

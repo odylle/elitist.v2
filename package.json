@@ -1,7 +1,7 @@
 {
   "name": "elitist",
   "displayName": "Elitist",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "build": {
     "appId": "com.electron.elitist",
     "productName": "Elitist",
