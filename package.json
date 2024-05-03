@@ -2,12 +2,20 @@
   "name": "elitist",
   "displayName": "Elitist",
   "version": "0.6.2",
+  "author": {
+    "name": "Odylle",
+    "email": "elitist-app@odylle.org"
+  },
   "build": {
     "appId": "com.electron.elitist",
     "productName": "Elitist",
     "win": {
       "publish": [
-        "github"
+        {
+          "provider": "github",
+          "owner": "Odylle",
+          "repo": "elitist.clean"
+        }
       ]
     }
   },
