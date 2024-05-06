@@ -203,7 +203,7 @@ main .init .title .text .h4 {
   /* padding-top: 5px; */
 }
 main .init .message {
-  font-size: 11px;
+  font-size: 12px;
   color: #ff7000aa;
   font-style: italic;
   padding-bottom: 4px;
@@ -798,4 +798,14 @@ main footer {
   to {
     opacity: 0;
   }
+}
+
+
+@media screen and (min-width: 90rem) {
+  nav.app-menu { height: 40px; }
+  nav .app-title { font-size: 1.2rem; }
+  main { padding-top: 40px; }
+  main section { height: 60px; }
+  main section > header .title .h1 { font-size: 1.3rem; }
+  main section > header .title .h4 { font-size: 1.05rem; }
 }

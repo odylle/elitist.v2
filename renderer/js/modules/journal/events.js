@@ -225,6 +225,11 @@ const ScanOrganic = async (line) => {
       resolve({ callback: "system.update.signals", data: line.Body });
     }
     if (line.ScanType == "Analyse") {
+      // Sometimes when you restart a session, before the value is logged progress is off. This sets it to complete, just to be sure.
+      store.set(
+        `session.exobiology.signals.${line.SystemAddress}.${line.Body}.${genus}.progress`,
+        3,
+      );
       // Add to session. The values there are cleared after a SellorganicData event
       if (
         !store.get(`session.exobiology.samples.${genus}.${species}.${variant}`)

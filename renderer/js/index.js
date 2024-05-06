@@ -18,7 +18,7 @@ queue = new notifications.NotificationQueue();
 
 // folder = process.cwd() + "/logs";
 // folder = "%userprofile%\\Saved Games\\Frontier Developments\\Elite Dangerous"
-folder = require("os").homedir() + "\\Saved Games\\Frontier Developments\\Elite Dangerous"
+folder = process.env.ELECTRON_ENV == "development" ? process.cwd() + "/logs" : require("os").homedir() + "\\Saved Games\\Frontier Developments\\Elite Dangerous"
 
 const getPromiseFromEvent = (item, event) => {
   return new Promise((resolve) => {

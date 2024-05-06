@@ -1,7 +1,7 @@
 {
   "name": "elitist",
   "displayName": "Elitist",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": {
     "name": "Odylle",
     "email": "elitist-app@odylle.org"
@@ -14,7 +14,7 @@
         {
           "provider": "github",
           "owner": "Odylle",
-          "repo": "elitist.clean"
+          "repo": "elitist.v2"
         }
       ]
     }
@@ -29,6 +29,7 @@
   },
   "scripts": {
     "start": "electron .",
+    "start:dev": "ELECTRON_ENV=development electron .",
     "postinstall": "electron-builder install-app-deps",
     "build": "electron-builder --windows",
     "release": "electron-builder --windows --publish always"
@@ -46,5 +47,5 @@
     "electron-store": "^8.2.0",
     "line-by-line": "^0.1.6"
   },
-  "repository": "https://github.com/odylle/elitist.clean.git"
+  "repository": "https://github.com/odylle/elitist.v2.git"
 }

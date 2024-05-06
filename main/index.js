@@ -23,14 +23,16 @@ const createWindow = () => {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    frame: false,
+    frame: process.env.ELECTRON_ENV == "development" ? true : false,
   });
 
   // and load the index.html of the app.
   win.loadFile("renderer/index.html");
 
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  if (process.env.ELECTRON_ENV == "development") {
+    win.webContents.openDevTools()
+  }
 };
 
 // This method will be called when Electron has finished
